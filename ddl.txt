@@ -1,0 +1,51 @@
+db2admin
+password
+port 50000
+
+
+qualifiedName			"DB2ADMIN"."TEST_TABLE"
+remarks					<null>
+schemaName				DB2ADMIN
+simpleName				TEST_TABLE
+type					TABLE
+
+---
+DDL
+---
+
+create table EVENT (
+	EVENT_ID varchar(100) NOT NULL,
+	DEAL_ID varchar(100) NOT NULL,
+	EVENT_TYPE varchar(100) NOT NULL
+)
+ALTER TABLE EVENT ADD PRIMARY KEY (EVENT_ID)
+
+
+create table QUOTE_EVENT_REF (
+	QUOTE_ID varchar(100) NOT NULL,
+	EVENT_ID varchar(100) NOT NULL
+)
+ALTER TABLE QUOTE_EVENT_REF ADD PRIMARY KEY (QUOTE_ID)
+ALTER TABLE QUOTE_EVENT_REF ADD CONSTRAINT FK_QUOTE_EVENT_REF FOREIGN KEY (EVENT_ID) REFERENCES EVENT(EVENT_ID)
+
+create table DEAL_QUOTE_REF (
+	DEAL_ID varchar(100) NOT NULL,
+	QUOTE_ID varchar(100) NOT NULL
+)
+ALTER TABLE DEAL_QUOTE_REF ADD PRIMARY KEY (DEAL_ID, QUOTE_ID)
+ALTER TABLE DEAL_QUOTE_REF ADD COLUMN IS_LATEST BOOLEAN NOT NULL DEFAULT 0
+ALTER TABLE DEAL_QUOTE_REF ADD CONSTRAINT FK_DEAL_QUOTE_REF FOREIGN KEY (QUOTE_ID) REFERENCES QUOTE_EVENT_REF(QUOTE_ID)
+
+select * from EVENT
+select * from QUOTE_EVENT_REF
+select * from DEAL_QUOTE_REF
+
+delete from EVENT
+delete from QUOTE_EVENT_REF
+delete from DEAL_QUOTE_REF
+
+select s2.s17, s2.s18, s2.s19, s3.s20, s3.s21, s3.s22 from (select s35."DEAL_ID" as s17, s35."QUOTE_ID" as s18, s35."IS_LATEST" as s19 from "DEAL_QUOTE_REF" s35) s2 inner join (select s37."EVENT_ID" as s20, s37."EVENT_TYPE" as s21, s37."DEAL_ID" as s22 from "EVENT" s37) s3 on s2.s17 = s3.s22
+
+select s2.s31, s2.s32, s2.s33, s2.s34, s2.s35, s2.s36, s3.s37, s3.s38 from (select s4.s25 as s31, s4.s26 as s32, s4.s27 as s33, s5.s28 as s34, s5.s29 as s35, s5.s30 as s36 from (select s55."DEAL_ID" as s25, s55."QUOTE_ID" as s26, s55."IS_LATEST" as s27 from "DEAL_QUOTE_REF" s55) s4 inner join (select s57."EVENT_ID" as s28, s57."EVENT_TYPE" as s29, s57."DEAL_ID" as s30 from "EVENT" s57) s5 on s4.s25 = s5.s30) s2 inner join (select s59."QUOTE_ID" as s37, s59."EVENT_ID" as s38 from "QUOTE_EVENT_REF" s59) s3 on s2.s34 = s3.s38
+
+select s4.s35, s4.s36, s4.s37, s4.s38, s4.s39, s4.s40, s5.s41, s5.s42 from (select s6.s29 as s35, s6.s30 as s36, s6.s31 as s37, s7.s32 as s38, s7.s33 as s39, s7.s34 as s40 from (select s67."DEAL_ID" as s29, s67."QUOTE_ID" as s30, s67."IS_LATEST" as s31 from "DEAL_QUOTE_REF" s67) s6 inner join (select s69."EVENT_ID" as s32, s69."EVENT_TYPE" as s33, s69."DEAL_ID" as s34 from "EVENT" s69) s7 on s6.s29 = s7.s34) s4 inner join (select s71."QUOTE_ID" as s41, s71."EVENT_ID" as s42 from "QUOTE_EVENT_REF" s71) s5 on s4.s38 = s5.s42 where (s4.s35 = 'deal_6') and (s5.s41 = 'quote_1_2_3')
